@@ -6,6 +6,7 @@ var calendar = {
             console.log("Your calendar is empty!");
         }
         else {
+            this.days.sort(this.compareDays);
             for (var i = 0; i < this.days.length; i++){
                 console.log (this.days[i].date + ": you read today!");
             }
@@ -17,20 +18,37 @@ var calendar = {
             date: date,
             read: true
         })
+    }, 
+    
+    compareDays: function(a,b) {
+        var comparison = 0;
+        if (a.date > b.date) {
+            comparison = 1;
+        } else if (a.date < b.date) {
+            comparison = -1;
+        }
+    return comparison;
     }
 }
 
 var handlers = {
     addDay: function() {
         var date = document.getElementById('addDayInput');
-        calendar.addDay(date.value);
-        date.value = '';
-        views.displayDays();
+        if (date.value === '') {
+            alert("please enter a valid date!");
+        }
+        else {
+            calendar.addDay(date.value);
+            date.value = '';
+            views.displayDays();
+        }
+        
     }
 }
 
 var views = {
     displayDays: function() {
+        calendar.days.sort(calendar.compareDays);
         var dayUl = document.querySelector('ul');
         dayUl.innerHTML = '';
         for (var i = 0; i < calendar.days.length; i++) {
