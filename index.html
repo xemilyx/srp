@@ -7,8 +7,31 @@
         <h1>Summer Reading Tracker</h1>
         
         <div>
-            <button onclick = "handlers.addDay()">Add Day</button>
-            <input id = "addDayInput" type ="date">
+            <div>
+                <label>Date:</label><input id = "addDayDate" type ="date">
+            </div>
+            <div>
+                <label>What did you read?</label>
+                <select id = "addDayMaterialType">
+                    <option>book</option>
+                    <option>magazine</option>
+                </select>
+            </div>
+            <div>
+                <label>Title: </label><input id = "addDayTitle" type = "text">
+                <label>Author: </label><input id = "addDayAuthor" type = "text">
+            </div>
+            <div>
+                <label>How did it make you feel?</label>
+                <select id = "addDayFeeling">
+                    <option>happy</option>
+                    <option>scared</option>
+                    <option>laughing</option>
+                </select>
+            </div>
+            <div>
+                <button onclick = "handlers.addDay()">Add Day</button>
+            </div>
         </div>
         
         <div>
