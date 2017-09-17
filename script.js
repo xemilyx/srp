@@ -3,18 +3,6 @@ var calendar = {
     
     feelings: {'happy':'FFE74C', 'scared':'828489', 'laughing':'20A39E', 'curious':'E0F2E9', 'angry':'FF5964','sad':'38618C','surprised':'35A7FF'},
     
-    displayDays: function() {
-        if (this.days.length === 0) {
-            console.log("Your calendar is empty!");
-        }
-        else {
-            this.days.sort(this.compareDays);
-            for (var i = 0; i < this.days.length; i++){
-                console.log (this.days[i].date + ": you read the " +this.days[i].type + ' ' +this.days[i].title + "  today!");
-            }
-        }
-    },
-    
     addDay: function(date, type, title, author, feeling) {
         this.days.push({
             date: date,
@@ -41,14 +29,9 @@ var calendar = {
 var bookshelf = {
     books: [],
     
-    getISBN: function(title, author) {
-        var url = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' + title + '+inauthor:' + author;
-        console.log(url);
-        window.open(url, 'isbn');
-        //GET url;
-    },
-    
     addBook: function(title, author, date, type) {
+        
+        //if item is not  abook, create object without API call and display shelf
         if (type !== 'book') {
             bookshelf.books.push ({
                 type:type,
@@ -63,14 +46,13 @@ var bookshelf = {
                 });
             views.displayBooks();
             }
+            
+        //if item is a book, make API call and use that data to create object, then display shelf
         else {
             var url = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' + title + '+inauthor:' +author;
             $.get(url, function(data, success){
-                console.log(url);
-                console.log(data);
-                //console.log(data.items[0].volumeInfo.imageLinks.thumbnail);
-                console.log(data.totalItems);
-            //});
+                
+                //if API call returns at least one result, use first result data to create object
                 if (data.totalItems > 0) {
                     bookshelf.books.push ({
                     type:type,
@@ -84,6 +66,8 @@ var bookshelf = {
                     coverUrl:data.items[0].volumeInfo.imageLinks.thumbnail
                     });
                 }
+                
+                //if API call does not return a result, create object with user data
                 else {
                     bookshelf.books.push ({
                     type:type,
@@ -112,18 +96,6 @@ var bookshelf = {
         return bookOnShelf;
     },
     
-    displayBooks: function() {
-        if (this.books.length === 0) {
-            console.log("Your bookshelf is empty!");
-        }
-        else {
-            this.books.sort(this.compareBooks);
-            for (var i = 0; i < this.books.length; i++){
-                console.log (this.books[i].author + '-- ' + this.books[i].title);
-            }
-        }        
-    },
-    
     compareBooks: function(a,b) {
         var comparison = 0;
         if (a.author > b.author) {
@@ -139,23 +111,39 @@ var handlers = {
     addDay: function() {
         var date = document.getElementById('addDayDate');
         var type = document.getElementById('addDayMaterialType');
-        var title = document.getElementById('addDayTitle');
+        var titleObj = document.getElementById('addDayTitle');
         var firstName = document.getElementById('firstName');
-        var author = document.getElementById('addDayAuthor');
+        var authorObj = document.getElementById('addDayAuthor');
         var feeling = document.getElementById('addDayFeeling');
+        
+        //capitalize first letters of author's last name and title
+        var titleArray = titleObj.value.split(' ');
+        var titleArrayCaps = [];
+        for (var i = 0; i < titleArray.length; i++) {
+            var nextWord = titleArray[i][0].toUpperCase() + titleArray[i].substring(1).toLowerCase();
+            titleArrayCaps.push(nextWord);
+        }
+        var title = titleArrayCaps.join(" ");
+        
+        var author = authorObj.value;
+        if (author.length > 0) {
+            author = author[0].toUpperCase() + author.substring(1).toLowerCase();
+        }
+        
+        //make sure date is valid
         if (date.value === '') {
             alert("please enter a valid date!");
         }
         else {
-            if (bookshelf.checkShelf(title.value, author.value) === false) {
+            if (bookshelf.checkShelf(title, author) === false) {
                 this.addBook();                
             };
-            calendar.addDay(date.value, type.value, title.value, author.value, feeling.value);
+            calendar.addDay(date.value, type.value, title, author, feeling.value);
             date.value = '';
             type.value = 'book';
-            title.value = '';
+            titleObj.value = '';
             firstName.value = '';
-            author.value = '';
+            authorObj.value = '';
             feeling.value = 'happy';
             views.displayDays();
         }
@@ -164,13 +152,26 @@ var handlers = {
     
     addBook: function() {
         var dateAdded = document.getElementById('addDayDate');
-        var title = document.getElementById('addDayTitle');
-        var author = document.getElementById('addDayAuthor');
+        var titleObj = document.getElementById('addDayTitle');
+        var authorObj = document.getElementById('addDayAuthor');
         var type = document.getElementById('addDayMaterialType');
-        bookshelf.addBook(title.value, author.value, dateAdded.value, type.value);
-        //console.log("Why is addBook not calling views?");
-        //I think it has to do with the time it takes to load API data
-        //views.displayBooks();
+        
+        //capitalize first letters of author's last name and title
+        var titleArray = titleObj.value.split(' ');
+        var titleArrayCaps = [];
+        for (var i = 0; i < titleArray.length; i++) {
+            var nextWord = titleArray[i][0].toUpperCase() + titleArray[i].substring(1).toLowerCase();
+            titleArrayCaps.push(nextWord);
+        }
+        var title = titleArrayCaps.join(" ");
+
+        var author = authorObj.value;
+        if (author.length > 0) {
+            author = author[0].toUpperCase() + author.substring(1).toLowerCase();
+        }
+        
+        bookshelf.addBook(title, author, dateAdded.value, type.value);
+
     }
 };
 
