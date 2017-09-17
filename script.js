@@ -41,15 +41,31 @@ var calendar = {
 var bookshelf = {
     books: [],
     
+    getISBN: function(title, author) {
+        var url = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' + title + '+inauthor:' + author;
+        console.log(url);
+        window.open(url, 'isbn');
+        //GET url;
+    },
+    
     addBook: function(title, author, date) {
-        this.books.push ({
-            title: title,
-            author: author,
-            dateAdded: date,
-            finished: false,
-            stars:null,
-            review:'',
-            genre:''
+        var url = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' + title + '+inauthor:' +author;
+        $.get(url, function(data, success){
+            console.log(url);
+            console.log(data);
+            console.log(data.items[0].volumeInfo.imageLinks.thumbnail);
+        //});
+            bookshelf.books.push ({
+                title: title,
+                author: author,
+                dateAdded: date,
+                finished: false,
+                stars:null,
+                review:'',
+                genre:'',
+                coverUrl:data.items[0].volumeInfo.imageLinks.thumbnail
+            });
+            views.displayBooks();
         });
     },
     
@@ -116,7 +132,9 @@ var handlers = {
         var title = document.getElementById('addDayTitle');
         var author = document.getElementById('addDayAuthor');
         bookshelf.addBook(title.value, author.value, dateAdded.value);
-        views.displayBooks();
+        //console.log("Why is addBook not calling views?");
+        //I think it has to do with the time it takes to load API data
+        //views.displayBooks();
     }
 };
 
@@ -144,8 +162,9 @@ var views = {
         for (var i = 0; i < bookshelf.books.length; i++) {
             var author = bookshelf.books[i].author;
             var title = bookshelf.books[i].title;
+            var coverUrl = bookshelf.books[i].coverUrl;
             var bookLi = document.createElement('li');
-            bookLi.textContent = author + "-- " + title;
+            bookLi.innerHTML = author + "-- " + title + "<img src =" + coverUrl + ">";
             bookUl.appendChild(bookLi);
         }
     }
