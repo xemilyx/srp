@@ -1,7 +1,7 @@
 var calendar = {
     days: [],
     
-    feelings: {'happy':'lightyellow', 'scared':'gray', 'laughing':'purple'},
+    feelings: {'happy':'FFE74C', 'scared':'828489', 'laughing':'20A39E', 'curious':'E0F2E9', 'angry':'FF5964','sad':'38618C','surprised':'35A7FF'},
     
     displayDays: function() {
         if (this.days.length === 0) {
@@ -48,14 +48,10 @@ var bookshelf = {
         //GET url;
     },
     
-    addBook: function(title, author, date) {
-        var url = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' + title + '+inauthor:' +author;
-        $.get(url, function(data, success){
-            console.log(url);
-            console.log(data);
-            console.log(data.items[0].volumeInfo.imageLinks.thumbnail);
-        //});
+    addBook: function(title, author, date, type) {
+        if (type !== 'book') {
             bookshelf.books.push ({
+                type:type,
                 title: title,
                 author: author,
                 dateAdded: date,
@@ -63,10 +59,47 @@ var bookshelf = {
                 stars:null,
                 review:'',
                 genre:'',
-                coverUrl:data.items[0].volumeInfo.imageLinks.thumbnail
-            });
+                coverUrl:'http://via.placeholder.com/140x200'
+                });
             views.displayBooks();
-        });
+            }
+        else {
+            var url = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' + title + '+inauthor:' +author;
+            $.get(url, function(data, success){
+                console.log(url);
+                console.log(data);
+                //console.log(data.items[0].volumeInfo.imageLinks.thumbnail);
+                console.log(data.totalItems);
+            //});
+                if (data.totalItems > 0) {
+                    bookshelf.books.push ({
+                    type:type,
+                    title: title,
+                    author: author,
+                    dateAdded: date,
+                    finished: false,
+                    stars:null,
+                    review:'',
+                    genre:'',
+                    coverUrl:data.items[0].volumeInfo.imageLinks.thumbnail
+                    });
+                }
+                else {
+                    bookshelf.books.push ({
+                    type:type,
+                    title: title,
+                    author: author,
+                    dateAdded: date,
+                    finished: false,
+                    stars:null,
+                    review:'',
+                    genre:'',
+                    coverUrl:'http://via.placeholder.com/140x200'
+                    });
+                }
+            views.displayBooks();
+            });
+        }
     },
     
     checkShelf: function(title, author) {
@@ -107,6 +140,7 @@ var handlers = {
         var date = document.getElementById('addDayDate');
         var type = document.getElementById('addDayMaterialType');
         var title = document.getElementById('addDayTitle');
+        var firstName = document.getElementById('firstName');
         var author = document.getElementById('addDayAuthor');
         var feeling = document.getElementById('addDayFeeling');
         if (date.value === '') {
@@ -118,10 +152,11 @@ var handlers = {
             };
             calendar.addDay(date.value, type.value, title.value, author.value, feeling.value);
             date.value = '';
-            type.value = '';
+            type.value = 'book';
             title.value = '';
+            firstName.value = '';
             author.value = '';
-            feeling.value = '';
+            feeling.value = 'happy';
             views.displayDays();
         }
         
@@ -131,7 +166,8 @@ var handlers = {
         var dateAdded = document.getElementById('addDayDate');
         var title = document.getElementById('addDayTitle');
         var author = document.getElementById('addDayAuthor');
-        bookshelf.addBook(title.value, author.value, dateAdded.value);
+        var type = document.getElementById('addDayMaterialType');
+        bookshelf.addBook(title.value, author.value, dateAdded.value, type.value);
         //console.log("Why is addBook not calling views?");
         //I think it has to do with the time it takes to load API data
         //views.displayBooks();

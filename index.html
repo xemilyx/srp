@@ -2,46 +2,53 @@
 <html>
     <head>
         <!--<link rel = "stylesheet" href = "style.css"> -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Summer Reading Tracker</h1>
+        <div class="container">
+            <h1>Summer Reading Tracker</h1>
         
-        <div>
             <div>
-                <label>Date:</label><input id = "addDayDate" type ="date">
+                <div>
+                    <label>Date:</label><input id = "addDayDate" type ="date">
+                </div>
+                <div>
+                    <label>What did you read?</label>
+                    <select id = "addDayMaterialType">
+                        <option>book</option>
+                        <option>magazine</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Title: </label><input id = "addDayTitle" type = "text">
+                    <label>Author: </label><input id ="firstName" type ="text" placeholder ="First Name"><input id = "addDayAuthor" type = "text" placeholder ="Last Name">
+                </div>
+                <div>
+                    <label>How did it make you feel?</label>
+                    <select id = "addDayFeeling">
+                        <option>happy</option>
+                        <option>angry</option>
+                        <option>curious</option>
+                        <option>scared</option>
+                        <option>laughing</option>
+                        <option>sad</option>
+                        <option>surprised</option>
+                    </select>
+                </div>
+                <div>
+                    <button onclick = "handlers.addDay()">Add Day</button>
+                </div>
             </div>
+        
             <div>
-                <label>What did you read?</label>
-                <select id = "addDayMaterialType">
-                    <option>book</option>
-                    <option>magazine</option>
-                </select>
+                <ul id="calendarUl"></ul>
             </div>
+        
             <div>
-                <label>Title: </label><input id = "addDayTitle" type = "text">
-                <label>Author: </label><input id = "addDayAuthor" type = "text">
-            </div>
-            <div>
-                <label>How did it make you feel?</label>
-                <select id = "addDayFeeling">
-                    <option>happy</option>
-                    <option>scared</option>
-                    <option>laughing</option>
-                </select>
-            </div>
-            <div>
-                <button onclick = "handlers.addDay()">Add Day</button>
+                <ul id="bookshelfUl" class="list-inline"></ul>
             </div>
         </div>
-        
-        <div>
-            <ul id="calendarUl"></ul>
-        </div>
-        
-        <div>
-            <ul id="bookshelfUl"></ul>
-        </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src = "script.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script src = "script.js"></script>
     </body>
 </html>
